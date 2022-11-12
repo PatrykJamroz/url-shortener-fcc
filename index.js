@@ -37,8 +37,11 @@ const shortUrlschema = new mongoose.Schema({
 const ShortUrl = mongoose.model("ShortUrl", shortUrlschema);
 
 app.post("/api/shorturl", (req, res) => {
-  if (!(validUrl.isHttpUri(req.body.url) || validUrl.isHttpUri(req.body.url))) {
-    return res.json({ error: "invalid url" });
+  const urlPayload = req.body.url;
+  const invalidUrlObj = { error: "invalid url" };
+  if (urlPayload.startsWith("ftp:/")) return res.json(invalidUrlObj);
+  if (!validUrl.isWebUri(urlPayload)) {
+    return res.json(invalidUrlObj);
   }
   const newShortUrl = new ShortUrl({ url: req.body.url });
   newShortUrl.save((err, data) => {
