@@ -10,6 +10,8 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
 });
 
+const validUrl = require("valid-url");
+
 // Basic Configuration
 const port = process.env.PORT || 3000;
 
@@ -35,6 +37,9 @@ const shortUrlschema = new mongoose.Schema({
 const ShortUrl = mongoose.model("ShortUrl", shortUrlschema);
 
 app.post("/api/shorturl", (req, res) => {
+  if (!validUrl.isWebUri(req.body.url)) {
+    return res.json({ error: "invalid url" });
+  }
   const newShortUrl = new ShortUrl({ url: req.body.url });
   newShortUrl.save((err, data) => {
     if (err) return err;
@@ -44,6 +49,7 @@ app.post("/api/shorturl", (req, res) => {
 
 app.get("/api/shorturl/:id", (req, res) => {
   ShortUrl.findById(req.params.id, (err, data) => {
+    if (err) throw err;
     res.redirect(data.url);
   });
 });
