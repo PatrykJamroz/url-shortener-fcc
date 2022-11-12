@@ -38,7 +38,7 @@ app.post("/api/shorturl", (req, res) => {
   const newShortUrl = new ShortUrl({ url: req.body.url });
   newShortUrl.save((err, data) => {
     if (err) return err;
-    res.json({ url: req.body.url, id: data._id });
+    res.json({ original_url: req.body.url, short_url: data._id });
   });
 });
 
