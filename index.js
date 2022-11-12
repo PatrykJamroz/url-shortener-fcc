@@ -37,7 +37,7 @@ const shortUrlschema = new mongoose.Schema({
 const ShortUrl = mongoose.model("ShortUrl", shortUrlschema);
 
 app.post("/api/shorturl", (req, res) => {
-  if (!validUrl.isWebUri(req.body.url)) {
+  if (!(validUrl.isHttpUri(req.body.url) || validUrl.isHttpUri(req.body.url))) {
     return res.json({ error: "invalid url" });
   }
   const newShortUrl = new ShortUrl({ url: req.body.url });
